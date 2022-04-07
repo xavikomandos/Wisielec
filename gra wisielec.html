@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gra_Wsielec</title>
+    <link rel="stylesheet" href="..//Desktop/wisieleccss.css">
+</head>
+<body onload="init()">
+
+    <h1>GRA WISIELEC</h1>
+
+    <img src="..//Desktop/img/wisielec.jpg"> 
+
+    <span id="attemptCounter"> Ilość Prób: </span>
+    
+    <div class="col-6 text-center pt-5" id="password" style="letter-spacing: 1rem;">
+        __________
+    </div>
+
+    <div class="row m-5">
+        <div class="col text-center" id="keyboard">
+            
+
+        </div>
+    </div>
+
+    <script>
+        var password;
+        var passwordMask = Array();
+        var attempts;
+        var maxAttempts = 6;
+        function init() {
+            for (let code = 65; code < 91; code++) {
+
+                let char = String.fromCharCode(code);
+                let button = document.createElement('button');
+                button.innerHTML = char;
+                button.classList.add('btn');
+                button.classList.add('btn-primary');
+                button.addEventListener("click", guess);
+                document.getElementById('keyboard').appendChild(button);
+            }
+            password = prompt("Wpisz Hasło:");
+            password = password.toUpperCase();
+            passwordMask = new Array(password.length);
+            passwordMask.fill(true);
+            document.getElementById('password').innerHTML = getMaskedPassword();
+            attempts = 0;
+            document.getElementById('attemptCounter').innerHTML = "Ilość Prób: " + attempts + "/" + maxAttempts;
+            document.getElementById('wisielec').src = attempts + ".png";
+        }
+
+        function guess(event) {
+            let success = false; 
+            let char = event.srcElement.innerHTML;
+            let passwordArray = password.split("");
+            for(let i = 0; i < passwordArray.length; i++) {
+                if(passwordArray[i] == char) {
+                    passwordMask[i] = false;
+                    success = true;
+                }
+            }
+            document.getElementById('password').innerHTML = getMaskedPassword();
+            event.srcElement.disabled = true;
+            if(!success) {
+                attempts++; 
+                document.getElementById('attemptCounter').innerHTML = "Próby: " + attempts + "/" + maxAttempts;
+                document.getElementById('hangmanPic').src = attempts + ".png";
+            }
+            if(checkLose()) {
+                alert("Niestety towarzyszu. Poległeś :c");
+            }
+            if(checkWin()) {
+                alert("Mission Complete +Respect");
+            }
+        }
+        function checkLose() {
+            if(attempts >= maxAttempts) {
+                return true; 
+            }
+            else return false;
+        }
+        function checkWin() {
+            for (let i = 0; i < passwordMask.length; i++) {
+                if(passwordMask[i] == true) 
+                    return false;
+            }
+            return true; 
+        }
+        function getMaskedPassword() {
+            let passwordArray = password.split("");
+            let maskedPassword = Array();
+            for(let i = 0; i < passwordArray.length; i++) {
+                if(passwordMask[i])
+                    maskedPassword.push("_");
+                else
+                    maskedPassword.push(passwordArray[i]);
+            }
+            let maskedPasswordString = maskedPassword.join("");
+            return maskedPasswordString;
+        }
+
+    </script>
+
+</body>
+</html>
